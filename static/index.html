@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>开普勒内存启动器工坊</title>
+  <link rel="icon" href="/brand/logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body class="aio-app axiox-shell">
+  <div class="bg-grid"></div>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark"><img src="/brand/logo.png" alt="A|O" /></div>
+        <div>
+          <h1 data-i18n="appTitle">开普勒内存启动器工坊</h1>
+          <p data-i18n="appSubtitle">两步生成带内存优化与优先级保护的启动 EXE</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="lang-switch" id="uiLangSwitch">
+          <button type="button" data-ui-lang="zh">中文</button>
+          <button type="button" data-ui-lang="en">EN</button>
+        </div>
+        <div class="chip" id="platformChip">Win32</div>
+      </div>
+    </header>
+
+    <nav class="steps" id="stepNav"></nav>
+
+    <section class="workspace">
+      <article class="wizard-card on" id="stage0">
+        <div class="kicker">Step 01</div>
+        <h2 data-i18n="step1Title">选择启动方式</h2>
+        <p class="lead" data-i18n="step1Lead">决定生成出来的启动器是打开协议链接，还是按程序全名查找并拉起游戏。</p>
+        <div class="choice-grid">
+          <button type="button" class="choice on" id="modeUrl" data-mode="url">
+            <span class="choice-kicker" data-i18n="modeUrlKicker">Protocol</span>
+            <strong data-i18n="modeUrlTitle">启动链接</strong>
+            <span data-i18n="modeUrlBody">任意协议前缀。默认预填 steam://launch/，可改成 steam://run/ 或其他商店协议。</span>
+          </button>
+          <button type="button" class="choice" id="modeExe" data-mode="exe">
+            <span class="choice-kicker" data-i18n="modeExeKicker">Process</span>
+            <strong data-i18n="modeExeTitle">游戏程序全名</strong>
+            <span data-i18n="modeExeBody">只填文件名，例如 KP186F-Win64-Shipping.exe。不需要路径，启动器会在磁盘根目录树里查找。</span>
+          </button>
+        </div>
+        <div class="actions">
+          <span></span>
+          <button class="primary fit" id="next1" type="button" data-i18n="next">下一步</button>
+        </div>
+      </article>
+
+      <article class="wizard-card" id="stage1">
+        <div class="kicker">Step 02</div>
+        <h2 id="step2Title" data-i18n="step2UrlTitle">填写启动链接</h2>
+        <p class="lead" id="step2Lead" data-i18n="step2UrlLead">前缀可改。右侧只填应用 ID 或完整 URI。</p>
+
+        <div id="urlBlock">
+          <label for="urlPrefix" data-i18n="prefixLabel">协议前缀</label>
+          <div class="field">
+            <span class="icon">://</span>
+            <input id="urlPrefix" type="text" value="steam://launch/" autocomplete="off" />
+          </div>
+          <label for="urlRest" data-i18n="urlRestLabel">链接内容</label>
+          <div class="field">
+            <span class="icon">⌘</span>
+            <input id="urlRest" type="text" data-i18n-placeholder="urlRestPh" placeholder="480 或完整 steam://launch/480" autocomplete="off" />
+          </div>
+          <p class="hint" id="urlPreview"></p>
+        </div>
+
+        <div id="exeBlock" hidden>
+          <label for="exeName" data-i18n="exeLabel">程序全名（不是路径）</label>
+          <div class="field">
+            <span class="icon">▣</span>
+            <input id="exeName" type="text" data-i18n-placeholder="exePh" placeholder="KP186F-Win64-Shipping.exe" autocomplete="off" />
+          </div>
+          <p class="hint" data-i18n="exeHint">启动器会先看自己所在目录及子目录，再扫固定磁盘根目录。游戏不必和启动器放在同一文件夹。</p>
+        </div>
+
+        <label for="dest" data-i18n="destLabel">输出目录</label>
+        <div class="field">
+          <span class="icon">⬇</span>
+          <input id="dest" type="text" placeholder="D:\Projects\MemOptLaunchers" />
+        </div>
+
+        <div class="actions">
+          <button class="ghost" id="back1" type="button" data-i18n="back">上一步</button>
+          <button class="primary fit" id="generate" type="button" data-i18n="generate">生成 EXE</button>
+        </div>
+        <p class="hint" id="genHint"></p>
+      </article>
+
+      <article class="wizard-card" id="stage2">
+        <div class="kicker">Step 03</div>
+        <h2 data-i18n="step3Title">取走启动器</h2>
+        <p class="lead" data-i18n="step3Lead">把这个 EXE 放到任意位置运行。它会先清内存，再启动目标，并每分钟继续优化、拉高游戏优先级。</p>
+        <div class="result" id="resultBox">
+          <div class="kicker">Output</div>
+          <h3 id="resultName">—</h3>
+          <p class="mono" id="resultPath">—</p>
+          <div class="stats">
+            <span class="stat" id="resultBytes">—</span>
+            <span class="stat" id="resultCompiler">—</span>
+            <span class="stat" id="resultMode">—</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="ghost" id="again" type="button" data-i18n="again">再生成一个</button>
+          <button class="soft" id="openFolder" type="button" data-i18n="openFolder">打开所在文件夹</button>
+          <a class="primary fit link-btn" id="downloadBtn" href="#" data-i18n="download">下载 EXE</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="app-version" id="appVersion">v1.0.0</footer>
+  <div class="loading" id="loading" hidden>
+    <div class="loading-card">
+      <div class="spinner"></div>
+      <p data-i18n="compiling">正在编译启动器…</p>
+    </div>
+  </div>
+  <script src="/assets/app.js"></script>
+</body>
+</html>
